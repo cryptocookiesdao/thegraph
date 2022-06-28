@@ -1,41 +1,80 @@
-import { BigInt } from "@graphprotocol/graph-ts"
+import { BigInt, Address } from "@graphprotocol/graph-ts"
 import {
   CookieToken,
   Approval,
-  Minselltime,
-  OwnershipTransferred,
-  SetFreeFee,
-  SetHasFee,
-  SetTreasury,
   SwapToTreasury,
   Transfer
 } from "../generated/CookieToken/CookieToken"
-import { ExampleEntity } from "../generated/schema"
+import {
+  Mint as MintLP
+} from "../generated/UniswapV2Pair/UniswapV2Pair"
 
-export function handleApproval(event: Approval): void {
-  // Entities can be loaded from the store using a string ID; this ID
-  // needs to be unique across all entities of the same type
-  let entity = ExampleEntity.load(event.transaction.from.toHex())
+import { HourlyStat, DailyStat, WeeklyStat } from "../generated/schema"
 
-  // Entities only exist after they have been saved to the store;
-  // `null` checks allow to create entities on demand
-  if (!entity) {
-    entity = new ExampleEntity(event.transaction.from.toHex())
-
-    // Entity fields can be set using simple assignments
-    entity.count = BigInt.fromI32(0)
+function createOrGetHourly(timestamp: BigInt) : HourlyStat {
+  let hourly = (timestamp.toI32() / 60).toString();
+  
+  let _stat = HourlyStat.load(hourly);
+  if (!_stat) {
+    _stat = new HourlyStat(hourly);
+    _stat.timestamp = timestamp;
+    _stat.count_ckie_burn = BigInt.fromI32(0);
+    _stat.count_matic_add = BigInt.fromI32(0);
+    _stat.count_ckie_add = BigInt.fromI32(0);
+    _stat.count_lp_owned = BigInt.fromI32(0);
   }
+  return _stat;
+}
 
-  // BigInt and BigDecimal math are supported
-  entity.count = entity.count + BigInt.fromI32(1)
+function createOrGetDaily(timestamp: BigInt) : DailyStat {
+  let daily = (timestamp.toI32() / (60 * 24)).toString();
+  
+  let _stat = DailyStat.load(daily);
+  if (!_stat) {
+    _stat = new DailyStat(daily);
+    _stat.timestamp = timestamp;
+    _stat.count_ckie_burn = BigInt.fromI32(0);
+    _stat.count_matic_add = BigInt.fromI32(0);
+    _stat.count_ckie_add = BigInt.fromI32(0);
+    _stat.count_lp_owned = BigInt.fromI32(0);
+  }
+  return _stat;
+}
 
-  // Entity fields can be set based on event parameters
-  entity.owner = event.params.owner
-  entity.spender = event.params.spender
+function createOrGetWeekly(timestamp: BigInt) : WeeklyStat {
+  let weekly = (timestamp.toI32() / (60 * 24 * 7)).toString();
+  let _stat = WeeklyStat.load(weekly);
+  if (!_stat) {
+    _stat = new WeeklyStat(weekly);
+    _stat.timestamp = timestamp;
+    _stat.count_ckie_burn = BigInt.fromI32(0);
+    _stat.count_matic_add = BigInt.fromI32(0);
+    _stat.count_ckie_add = BigInt.fromI32(0);
+    _stat.count_lp_owned = BigInt.fromI32(0);
+  }
+  return _stat;
+}
+
+
+export function handleSwapToTreasury(event: SwapToTreasury): void {}
+
+// cookie transfer
+export function handleTransfer(event: Transfer): void {
+  let statH = createOrGetHourly(event.block.timestamp);
+  let statD = createOrGetDaily(event.block.timestamp);
+  let statW = createOrGetWeekly(event.block.timestamp);
+
+  if (event.params.to == Address.fromString('0x0000000000000000000000000000000000000000')) {
+    statH.count_ckie_burn = statH.count_ckie_burn.plus(event.params.value);
+    statD.count_ckie_burn = statD.count_ckie_burn.plus(event.params.value);
+    statW.count_ckie_burn = statW.count_ckie_burn.plus(event.params.value);
+  }
+  statH.save();
+  statD.save();
+  statW.save();
 
   // Entities can be written to the store with `.save()`
-  entity.save()
-
+  
   // Note: If a handler doesn't require existing field values, it is faster
   // _not_ to load the entity from the store. Instead, create it fresh with
   // `new Entity(...)`, set the fields that should be updated and save the
@@ -70,18 +109,9 @@ export function handleApproval(event: Approval): void {
   // - contract.transfer(...)
   // - contract.transferFrom(...)
   // - contract.treasury(...)
+
 }
 
-export function handleMinselltime(event: Minselltime): void {}
+export function handleMintLP(event: MintLP): void {
 
-export function handleOwnershipTransferred(event: OwnershipTransferred): void {}
-
-export function handleSetFreeFee(event: SetFreeFee): void {}
-
-export function handleSetHasFee(event: SetHasFee): void {}
-
-export function handleSetTreasury(event: SetTreasury): void {}
-
-export function handleSwapToTreasury(event: SwapToTreasury): void {}
-
-export function handleTransfer(event: Transfer): void {}
+}

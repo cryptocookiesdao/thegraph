@@ -1,6 +1,6 @@
 specVersion: 0.0.4
 schema:
-  file: ./schema.graphql
+  file: schema.graphql
 dataSources:
   - kind: ethereum
     name: CookieToken
@@ -18,13 +18,13 @@ dataSources:
         - Transfer
       abis:
         - name: CookieToken
-          file: ./abis/CookieToken.json
+          file: CookieToken/abis/CookieToken.json
       eventHandlers:
         - event: SwapToTreasury(uint256[])
           handler: handleSwapToTreasury
         - event: Transfer(indexed address,indexed address,uint256)
           handler: handleTransfer
-      file: ./src/cookie-token.ts
+      file: CookieToken/CookieToken.wasm
   - kind: ethereum
     name: UniswapV2Pair
     network: matic
@@ -41,8 +41,8 @@ dataSources:
         - Mint
       abis:
         - name: UniswapV2Pair
-          file: ./abis/UniswapV2Pair.json
+          file: UniswapV2Pair/abis/UniswapV2Pair.json
       eventHandlers:
         - event: Mint(indexed address,uint256,uint256)
           handler: handleMintLP
-      file: ./src/cookie-token.ts
+      file: CookieToken/CookieToken.wasm
