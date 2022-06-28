@@ -43,6 +43,8 @@ dataSources:
         - name: UniswapV2Pair
           file: UniswapV2Pair/abis/UniswapV2Pair.json
       eventHandlers:
+        - event: Transfer(indexed address,indexed address,uint256)
+          handler: handleTransferLP
         - event: Mint(indexed address,uint256,uint256)
           handler: handleMintLP
       file: CookieToken/CookieToken.wasm

@@ -78,6 +78,15 @@ export class HourlyStat extends Entity {
     this.set("count_ckie_add", Value.fromBigInt(value));
   }
 
+  get count_lp_add(): BigInt {
+    let value = this.get("count_lp_add");
+    return value!.toBigInt();
+  }
+
+  set count_lp_add(value: BigInt) {
+    this.set("count_lp_add", Value.fromBigInt(value));
+  }
+
   get count_lp_owned(): BigInt {
     let value = this.get("count_lp_owned");
     return value!.toBigInt();
@@ -155,6 +164,15 @@ export class DailyStat extends Entity {
     this.set("count_ckie_add", Value.fromBigInt(value));
   }
 
+  get count_lp_add(): BigInt {
+    let value = this.get("count_lp_add");
+    return value!.toBigInt();
+  }
+
+  set count_lp_add(value: BigInt) {
+    this.set("count_lp_add", Value.fromBigInt(value));
+  }
+
   get count_lp_owned(): BigInt {
     let value = this.get("count_lp_owned");
     return value!.toBigInt();
@@ -230,6 +248,15 @@ export class WeeklyStat extends Entity {
 
   set count_ckie_add(value: BigInt) {
     this.set("count_ckie_add", Value.fromBigInt(value));
+  }
+
+  get count_lp_add(): BigInt {
+    let value = this.get("count_lp_add");
+    return value!.toBigInt();
+  }
+
+  set count_lp_add(value: BigInt) {
+    this.set("count_lp_add", Value.fromBigInt(value));
   }
 
   get count_lp_owned(): BigInt {

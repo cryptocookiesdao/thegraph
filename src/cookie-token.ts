@@ -6,7 +6,9 @@ import {
   Transfer
 } from "../generated/CookieToken/CookieToken"
 import {
-  Mint as MintLP
+  Transfer as TransferLP,
+  Mint as MintLP,
+  UniswapV2Pair
 } from "../generated/UniswapV2Pair/UniswapV2Pair"
 
 import { HourlyStat, DailyStat, WeeklyStat } from "../generated/schema"
@@ -22,6 +24,7 @@ function createOrGetHourly(timestamp: BigInt) : HourlyStat {
     _stat.count_matic_add = BigInt.fromI32(0);
     _stat.count_ckie_add = BigInt.fromI32(0);
     _stat.count_lp_owned = BigInt.fromI32(0);
+    _stat.count_lp_add = BigInt.fromI32(0);
   }
   return _stat;
 }
@@ -37,6 +40,7 @@ function createOrGetDaily(timestamp: BigInt) : DailyStat {
     _stat.count_matic_add = BigInt.fromI32(0);
     _stat.count_ckie_add = BigInt.fromI32(0);
     _stat.count_lp_owned = BigInt.fromI32(0);
+    _stat.count_lp_add = BigInt.fromI32(0);
   }
   return _stat;
 }
@@ -51,6 +55,7 @@ function createOrGetWeekly(timestamp: BigInt) : WeeklyStat {
     _stat.count_matic_add = BigInt.fromI32(0);
     _stat.count_ckie_add = BigInt.fromI32(0);
     _stat.count_lp_owned = BigInt.fromI32(0);
+    _stat.count_lp_add = BigInt.fromI32(0);
   }
   return _stat;
 }
@@ -73,45 +78,50 @@ export function handleTransfer(event: Transfer): void {
   statD.save();
   statW.save();
 
-  // Entities can be written to the store with `.save()`
+}
+
+export function handleTransferLP(event: TransferLP): void {
+  let statH = createOrGetHourly(event.block.timestamp);
+  let statD = createOrGetDaily(event.block.timestamp);
+  let statW = createOrGetWeekly(event.block.timestamp);
+
+  const uniPairAddress = Address.fromString('0xED1D8d6cdC88b6794555099Ca4Ed1aabEccE56c2');
   
-  // Note: If a handler doesn't require existing field values, it is faster
-  // _not_ to load the entity from the store. Instead, create it fresh with
-  // `new Entity(...)`, set the fields that should be updated and save the
-  // entity back to the store. Fields that were not set or unset remain
-  // unchanged, allowing for partial updates to be applied.
+  let uniPair = UniswapV2Pair.bind(uniPairAddress);
+  let ckie = UniswapV2Pair.bind(Address.fromString('0x3C0Bd2118a5E61C41d2aDeEBCb8B7567FDE1cBaF'));
+  let wmatic = UniswapV2Pair.bind(Address.fromString('0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270'));
 
-  // It is also possible to access smart contracts from mappings. For
-  // example, the contract that has emitted the event can be connected to
-  // with:
-  //
-  // let contract = Contract.bind(event.address)
-  //
-  // The following functions can then be called on this contract to access
-  // state variables and other data:
-  //
-  // - contract.allowance(...)
-  // - contract.approve(...)
-  // - contract.balanceOf(...)
-  // - contract.decimals(...)
-  // - contract.decreaseAllowance(...)
-  // - contract.freeFee(...)
-  // - contract.hasFee(...)
-  // - contract.haveTax(...)
-  // - contract.increaseAllowance(...)
-  // - contract.lastTransfer(...)
-  // - contract.minSellTime(...)
-  // - contract.name(...)
-  // - contract.owner(...)
-  // - contract.router(...)
-  // - contract.symbol(...)
-  // - contract.totalSupply(...)
-  // - contract.transfer(...)
-  // - contract.transferFrom(...)
-  // - contract.treasury(...)
+  let ckieBalance = ckie.balanceOf(uniPairAddress);
+  let wmaticBalance = wmatic.balanceOf(uniPairAddress);
+  let totalSupply = uniPair.totalSupply();
 
+
+  // 0x40fd228e9affd14c11a6df17cc7806a0d905ee93 is the treasury
+  const treasury = Address.fromString('0x40fd228e9affd14c11a6df17cc7806a0d905ee93')
+
+  statH.count_lp_owned = uniPair.balanceOf(treasury);
+  statD.count_lp_owned = statH.count_lp_owned;
+  statW.count_lp_owned = statH.count_lp_owned;
+
+  if (event.params.to == treasury) {
+    let valueWmatic = event.params.value.times(wmaticBalance).div(totalSupply);
+    let valueCkie = event.params.value.times(ckieBalance).div(totalSupply);
+
+    statH.count_lp_add = statH.count_lp_add.plus(event.params.value);
+    statH.count_ckie_add = statH.count_ckie_add.plus(valueCkie);
+    statH.count_matic_add = statH.count_matic_add.plus(valueWmatic);
+
+    statD.count_lp_add = statD.count_lp_add.plus(event.params.value);
+    statD.count_ckie_add = statD.count_ckie_add.plus(valueCkie);
+    statD.count_matic_add = statD.count_matic_add.plus(valueWmatic);
+
+    statW.count_lp_add = statW.count_lp_add.plus(event.params.value);
+    statW.count_ckie_add = statW.count_ckie_add.plus(valueCkie);
+    statW.count_matic_add = statW.count_matic_add.plus(valueWmatic);
+  }
+  statH.save();
+  statD.save();
+  statW.save();
 }
 
-export function handleMintLP(event: MintLP): void {
-
-}
+export function handleMintLP(event: MintLP): void {}
