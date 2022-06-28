@@ -14,7 +14,7 @@ import {
 import { HourlyStat, DailyStat, WeeklyStat } from "../generated/schema"
 
 function createOrGetHourly(timestamp: BigInt) : HourlyStat {
-  let hourly = (timestamp.toI32() / 60).toString();
+  let hourly = (timestamp.toI32() / (60 * 60)).toString();
   
   let _stat = HourlyStat.load(hourly);
   if (!_stat) {
@@ -30,7 +30,7 @@ function createOrGetHourly(timestamp: BigInt) : HourlyStat {
 }
 
 function createOrGetDaily(timestamp: BigInt) : DailyStat {
-  let daily = (timestamp.toI32() / (60 * 24)).toString();
+  let daily = (timestamp.toI32() / (60 * 60 * 24)).toString();
   
   let _stat = DailyStat.load(daily);
   if (!_stat) {
@@ -46,7 +46,7 @@ function createOrGetDaily(timestamp: BigInt) : DailyStat {
 }
 
 function createOrGetWeekly(timestamp: BigInt) : WeeklyStat {
-  let weekly = (timestamp.toI32() / (60 * 24 * 7)).toString();
+  let weekly = (timestamp.toI32() / (60 * 60 * 24 * 7)).toString();
   let _stat = WeeklyStat.load(weekly);
   if (!_stat) {
     _stat = new WeeklyStat(weekly);
