@@ -1,0 +1,44 @@
+specVersion: 0.0.4
+schema:
+  file: ./schema.graphql
+dataSources:
+  - kind: ethereum
+    name: CookieToken
+    network: matic
+    source:
+      address: "0x3c0bd2118a5e61c41d2adeebcb8b7567fde1cbaf"
+      abi: CookieToken
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.5
+      language: wasm/assemblyscript
+      entities:
+        - Approval
+        - Minselltime
+        - OwnershipTransferred
+        - SetFreeFee
+        - SetHasFee
+        - SetTreasury
+        - SwapToTreasury
+        - Transfer
+      abis:
+        - name: CookieToken
+          file: ./abis/CookieToken.json
+      eventHandlers:
+        - event: Approval(indexed address,indexed address,uint256)
+          handler: handleApproval
+        - event: Minselltime(uint256)
+          handler: handleMinselltime
+        - event: OwnershipTransferred(indexed address,indexed address)
+          handler: handleOwnershipTransferred
+        - event: SetFreeFee(address,bool)
+          handler: handleSetFreeFee
+        - event: SetHasFee(address,bool)
+          handler: handleSetHasFee
+        - event: SetTreasury(address)
+          handler: handleSetTreasury
+        - event: SwapToTreasury(uint256[])
+          handler: handleSwapToTreasury
+        - event: Transfer(indexed address,indexed address,uint256)
+          handler: handleTransfer
+      file: ./src/cookie-token.ts
