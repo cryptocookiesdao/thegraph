@@ -72,11 +72,19 @@ export function handleTransfer(event: Transfer): void {
   let statD = createOrGetDaily(event.block.timestamp);
   let statW = createOrGetWeekly(event.block.timestamp);
 
+  let ckie = UniswapV2Pair.bind(Address.fromString('0x3C0Bd2118a5E61C41d2aDeEBCb8B7567FDE1cBaF'));
+  
+
   if (event.params.to == Address.fromString('0x0000000000000000000000000000000000000000')) {
     statH.count_ckie_burn = statH.count_ckie_burn.plus(event.params.value);
     statD.count_ckie_burn = statD.count_ckie_burn.plus(event.params.value);
     statW.count_ckie_burn = statW.count_ckie_burn.plus(event.params.value);
   }
+
+  statH.count_ckie_add = ckie.totalSupply();
+  statD.count_ckie_add = statH.count_ckie_add;
+  statW.count_ckie_add = statH.count_ckie_add;
+
   statH.save();
   statD.save();
   statW.save();
