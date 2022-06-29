@@ -4,6 +4,7 @@ type HourlyStat @entity {
   count_ckie_burn: BigInt!
   count_matic_add: BigInt!
   count_ckie_add: BigInt!
+  count_ckie_supply: BigInt!
   count_lp_add: BigInt!
   count_lp_owned: BigInt!
 }
@@ -14,6 +15,7 @@ type DailyStat @entity {
   count_ckie_burn: BigInt!
   count_matic_add: BigInt!
   count_ckie_add: BigInt!
+  count_ckie_supply: BigInt!
   count_lp_add: BigInt!
   count_lp_owned: BigInt!
 }
@@ -24,6 +26,7 @@ type WeeklyStat @entity {
   count_ckie_burn: BigInt!
   count_matic_add: BigInt!
   count_ckie_add: BigInt!
+  count_ckie_supply: BigInt!
   count_lp_add: BigInt!
   count_lp_owned: BigInt!
 }

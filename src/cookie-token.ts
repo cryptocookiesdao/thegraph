@@ -23,6 +23,7 @@ function createOrGetHourly(timestamp: BigInt) : HourlyStat {
     _stat.count_ckie_burn = BigInt.fromI32(0);
     _stat.count_matic_add = BigInt.fromI32(0);
     _stat.count_ckie_add = BigInt.fromI32(0);
+    _stat.count_ckie_supply = BigInt.fromI32(0);
     _stat.count_lp_owned = BigInt.fromI32(0);
     _stat.count_lp_add = BigInt.fromI32(0);
   }
@@ -39,6 +40,7 @@ function createOrGetDaily(timestamp: BigInt) : DailyStat {
     _stat.count_ckie_burn = BigInt.fromI32(0);
     _stat.count_matic_add = BigInt.fromI32(0);
     _stat.count_ckie_add = BigInt.fromI32(0);
+    _stat.count_ckie_supply = BigInt.fromI32(0);
     _stat.count_lp_owned = BigInt.fromI32(0);
     _stat.count_lp_add = BigInt.fromI32(0);
   }
@@ -54,6 +56,7 @@ function createOrGetWeekly(timestamp: BigInt) : WeeklyStat {
     _stat.count_ckie_burn = BigInt.fromI32(0);
     _stat.count_matic_add = BigInt.fromI32(0);
     _stat.count_ckie_add = BigInt.fromI32(0);
+    _stat.count_ckie_supply = BigInt.fromI32(0);
     _stat.count_lp_owned = BigInt.fromI32(0);
     _stat.count_lp_add = BigInt.fromI32(0);
   }
@@ -102,6 +105,10 @@ export function handleTransferLP(event: TransferLP): void {
   statH.count_lp_owned = uniPair.balanceOf(treasury);
   statD.count_lp_owned = statH.count_lp_owned;
   statW.count_lp_owned = statH.count_lp_owned;
+
+  statH.count_ckie_add = ckie.totalSupply();
+  statD.count_ckie_add = statH.count_ckie_add;
+  statW.count_ckie_add = statH.count_ckie_add;
 
   if (event.params.to == treasury) {
     let valueWmatic = event.params.value.times(wmaticBalance).div(totalSupply);
