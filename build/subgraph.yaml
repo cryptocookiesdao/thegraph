@@ -8,7 +8,7 @@ dataSources:
     source:
       address: "0x3c0bd2118a5e61c41d2adeebcb8b7567fde1cbaf"
       abi: CookieToken
-      startBlock: 25982800
+      startBlock: 25982820
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.5
@@ -19,6 +19,8 @@ dataSources:
       abis:
         - name: CookieToken
           file: CookieToken/abis/CookieToken.json
+        - name: UniswapV2Pair
+          file: CookieToken/abis/UniswapV2Pair.json
       eventHandlers:
         - event: SwapToTreasury(uint256[])
           handler: handleSwapToTreasury
@@ -31,7 +33,7 @@ dataSources:
     source:
       address: "0xed1d8d6cdc88b6794555099ca4ed1aabecce56c2"
       abi: UniswapV2Pair
-      startBlock: 25982800
+      startBlock: 25982820
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.5
@@ -40,6 +42,8 @@ dataSources:
         - Transfer
         - Mint
       abis:
+        - name: CookieToken
+          file: UniswapV2Pair/abis/CookieToken.json
         - name: UniswapV2Pair
           file: UniswapV2Pair/abis/UniswapV2Pair.json
       eventHandlers:

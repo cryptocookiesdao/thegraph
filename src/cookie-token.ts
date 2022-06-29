@@ -72,7 +72,7 @@ export function handleTransfer(event: Transfer): void {
   let statD = createOrGetDaily(event.block.timestamp);
   let statW = createOrGetWeekly(event.block.timestamp);
 
-  let ckie = UniswapV2Pair.bind(Address.fromString('0x3C0Bd2118a5E61C41d2aDeEBCb8B7567FDE1cBaF'));
+  let ckie = CookieToken.bind(Address.fromString('0x3C0Bd2118a5E61C41d2aDeEBCb8B7567FDE1cBaF'));
   
 
   if (event.params.to == Address.fromString('0x0000000000000000000000000000000000000000')) {
@@ -81,9 +81,9 @@ export function handleTransfer(event: Transfer): void {
     statW.count_ckie_burn = statW.count_ckie_burn.plus(event.params.value);
   }
 
-  statH.count_ckie_add = ckie.totalSupply();
-  statD.count_ckie_add = statH.count_ckie_add;
-  statW.count_ckie_add = statH.count_ckie_add;
+  statH.count_ckie_supply = ckie.totalSupply();
+  statD.count_ckie_supply = statH.count_ckie_supply;
+  statW.count_ckie_supply = statH.count_ckie_supply;
 
   statH.save();
   statD.save();
@@ -99,7 +99,7 @@ export function handleTransferLP(event: TransferLP): void {
   const uniPairAddress = Address.fromString('0xED1D8d6cdC88b6794555099Ca4Ed1aabEccE56c2');
   
   let uniPair = UniswapV2Pair.bind(uniPairAddress);
-  let ckie = UniswapV2Pair.bind(Address.fromString('0x3C0Bd2118a5E61C41d2aDeEBCb8B7567FDE1cBaF'));
+  let ckie = CookieToken.bind(Address.fromString('0x3C0Bd2118a5E61C41d2aDeEBCb8B7567FDE1cBaF'));
   let wmatic = UniswapV2Pair.bind(Address.fromString('0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270'));
 
   let ckieBalance = ckie.balanceOf(uniPairAddress);
@@ -114,9 +114,9 @@ export function handleTransferLP(event: TransferLP): void {
   statD.count_lp_owned = statH.count_lp_owned;
   statW.count_lp_owned = statH.count_lp_owned;
 
-  statH.count_ckie_add = ckie.totalSupply();
-  statD.count_ckie_add = statH.count_ckie_add;
-  statW.count_ckie_add = statH.count_ckie_add;
+  statH.count_ckie_supply = ckie.totalSupply();
+  statD.count_ckie_supply = statH.count_ckie_supply;
+  statW.count_ckie_supply = statH.count_ckie_supply;
 
   if (event.params.to == treasury) {
     let valueWmatic = event.params.value.times(wmaticBalance).div(totalSupply);
